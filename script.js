@@ -1,16 +1,16 @@
 const status = document.querySelector(".status");
 let board = ["", "", "", "", "", "", "", "", ""];
-let currentPlayer = firstPlayer;
 let gameActive = true;
 
 
 const Player = function (sign) {
     let score = 0;
-    return {sign};
+    return {sign, score};
 }
 
 const firstPlayer = Player("X");
 const secondPlayer = Player("O");
+let currentPlayer = firstPlayer;
 
 const Game = (function () {
     const status = document.querySelector(".status");
@@ -34,11 +34,12 @@ const Game = (function () {
     };
 
     const checkWin = () => {
+        const status = document.querySelector(".status");
         for (let i = 0; i < winningPatterns.length; i++) {
             let [a, b ,c] = winningPatterns[i];
-            if (board[a] === board[b] && board[b] === board[c]) {
+            if (board[a] !== "" && board[a] === board[b] && board[b] === board[c]) {
                 gameActive = false;
-                status.textContent = `${currentPlayer} is the winner!`;
+                status.textContent = `${currentPlayer.sign} is the winner!`;
                 currentPlayer.score++;
                 displayScores();
                 break;
@@ -50,23 +51,30 @@ const Game = (function () {
         board = ["", "", "", "", "", "", "", "", ""];
         currentPlayer = firstPlayer;
         gameActive = true;
-        status.textContent = `${currentPlayer}'s turn`;
+        status.textContent = `${currentPlayer.sign}'s turn`;
+        document.querySelectorAll(".cell").forEach(cell => cell.textContent = "");
     }
 
-    return {checkWin, resetGame};
+    return { checkWin, resetGame };
 })();
 
 const cells = document.querySelectorAll(".cell");
 
 cells.forEach((cell, index) => {
     const status = document.querySelector(".status");
-    if (gameActive === true) {
-        cell.addEventListener("click", () => {
-            cells[index].textContent = `${currentPlayer}`;
-            board[index] = currentPlayer;
-            Game.checkWin();
-            currentPlayer = "X" ? "O" : "X";
-            status.textContent = `${currentPlayer}'s turn`;
-        });
-    };
+
+    cell.addEventListener("click", () => {
+        if (gameActive && board[index] === "") {
+                cell.textContent = currentPlayer.sign;
+                board[index] = currentPlayer.sign;
+                Game.checkWin();
+                currentPlayer = currentPlayer === firstPlayer ? secondPlayer : firstPlayer;
+                if (gameActive) {
+                    status.textContent = `${currentPlayer.sign}'s turn`;
+                };
+            };
+        }
+    );
 });
+
+Game.resetGame();
