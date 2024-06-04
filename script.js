@@ -51,7 +51,7 @@ const Game = (function () {
         board = ["", "", "", "", "", "", "", "", ""];
         currentPlayer = firstPlayer;
         gameActive = true;
-        status.textContent = `${currentPlayer.sign}'s turn`;
+        status.textContent = `${currentPlayer.sign} turn`;
         document.querySelectorAll(".cell").forEach(cell => cell.textContent = "");
     }
 
@@ -66,11 +66,16 @@ cells.forEach((cell, index) => {
     cell.addEventListener("click", () => {
         if (gameActive && board[index] === "") {
                 cell.textContent = currentPlayer.sign;
+                if (currentPlayer.sign === "X") {
+                    cell.setAttribute("style", "color: rgb(223, 145, 0);")
+                } else {
+                    cell.setAttribute("style", "color: rgb(0, 0, 209);")
+                }
                 board[index] = currentPlayer.sign;
                 Game.checkWin();
                 currentPlayer = currentPlayer === firstPlayer ? secondPlayer : firstPlayer;
                 if (gameActive) {
-                    status.textContent = `${currentPlayer.sign}'s turn`;
+                    status.textContent = `${currentPlayer.sign} turn`;
                 };
             };
         }
