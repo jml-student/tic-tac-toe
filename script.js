@@ -1,6 +1,5 @@
 const status = document.querySelector(".status");
 let board = ["", "", "", "", "", "", "", "", ""];
-let gameActive = true;
 
 
 const Player = function (sign) {
@@ -38,7 +37,6 @@ const Game = (function () {
         for (let i = 0; i < winningPatterns.length; i++) {
             let [a, b ,c] = winningPatterns[i];
             if (board[a] !== "" && board[a] === board[b] && board[b] === board[c]) {
-                gameActive = false;
                 status.textContent = `${currentPlayer.sign} is the winner!`;
                 currentPlayer.score++;
                 displayScores();
@@ -47,15 +45,24 @@ const Game = (function () {
         }
     };
 
-    const resetGame = () => {
+    const newTurn = () => {
         board = ["", "", "", "", "", "", "", "", ""];
         currentPlayer = firstPlayer;
-        gameActive = true;
         status.textContent = `${currentPlayer.sign} turn`;
         document.querySelectorAll(".cell").forEach(cell => cell.textContent = "");
     }
 
-    return { checkWin, resetGame };
+    const resetGame = () => {
+        board = ["", "", "", "", "", "", "", "", ""];
+        firstPlayer.score = 0;
+        secondPlayer.score = 0;
+        currentPlayer = firstPlayer;
+        status.textContent = `${currentPlayer.sign} turn`;
+        document.querySelectorAll(".cell").forEach(cell => cell.textContent = "");
+    }
+
+    return { checkWin, newTurn, resetGame};
+
 })();
 
 const cells = document.querySelectorAll(".cell");
@@ -64,7 +71,7 @@ cells.forEach((cell, index) => {
     const status = document.querySelector(".status");
 
     cell.addEventListener("click", () => {
-        if (gameActive && board[index] === "") {
+        if (board[index] === "") {
                 cell.textContent = currentPlayer.sign;
                 if (currentPlayer.sign === "X") {
                     cell.setAttribute("style", "color: rgb(223, 145, 0);")
@@ -74,9 +81,6 @@ cells.forEach((cell, index) => {
                 board[index] = currentPlayer.sign;
                 Game.checkWin();
                 currentPlayer = currentPlayer === firstPlayer ? secondPlayer : firstPlayer;
-                if (gameActive) {
-                    status.textContent = `${currentPlayer.sign} turn`;
-                };
             };
         }
     );
