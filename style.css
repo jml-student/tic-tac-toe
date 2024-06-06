@@ -79,7 +79,7 @@ body {
     font-family: "Varela Round", sans-serif;
     font-weight: 700;
     box-sizing: border-box;
-    cursor: alias;
+    cursor: default;
 }
 
 .cell:hover {

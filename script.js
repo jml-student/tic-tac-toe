@@ -32,6 +32,7 @@ const Game = (function () {
 
     const checkWin = () => {
         const status = document.querySelector(".status");
+        let winDetected = false;
         for (let i = 0; i < winningPatterns.length; i++) {
             let [a, b ,c] = winningPatterns[i];
             if (board[a] !== "" && board[a] === board[b] && board[b] === board[c]) {
@@ -45,13 +46,26 @@ const Game = (function () {
                 currentPlayer.score++;
                 displayScores();
                 gameActive = false;
+                winDetected = true;
                 setTimeout(() => {
                     newTurn();
                     clearStyles();
                 }, 2000);
-                break;
             };
         }
+
+        if (!winDetected && !board.includes("")) {
+            status.textContent = "Draw!";
+            for (let c = 0; c < cells.length; c++) {
+                let cell = cells[c];
+                cell.style.boxShadow = "white 0px 0px 5px 3px";
+            }
+            gameActive = false;
+            setTimeout(() => {
+                newTurn();
+                clearStyles();
+            }, 2000);
+        };
     };
 
     const clearStyles = () => {
